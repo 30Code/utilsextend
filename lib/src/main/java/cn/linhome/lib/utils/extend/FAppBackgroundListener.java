@@ -156,11 +156,13 @@ public final class FAppBackgroundListener
         final List<ActivityManager.RunningAppProcessInfo> list = manager.getRunningAppProcesses();
 
         final String packageName = context.getPackageName();
-        for (ActivityManager.RunningAppProcessInfo item : list)
-        {
-            if (item.processName.equals(packageName))
+        if (list != null && list.size() > 0) {
+            for (ActivityManager.RunningAppProcessInfo item : list)
             {
-                return item.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+                if (item.processName.equals(packageName))
+                {
+                    return item.importance != ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
+                }
             }
         }
         return false;

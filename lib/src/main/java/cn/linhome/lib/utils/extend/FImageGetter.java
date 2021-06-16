@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -15,6 +16,8 @@ public class FImageGetter
 {
     public static final int REQUEST_CODE_GET_IMAGE_FROM_CAMERA = 16542;
     public static final int REQUEST_CODE_GET_IMAGE_FROM_ALBUM = REQUEST_CODE_GET_IMAGE_FROM_CAMERA + 1;
+
+    private final String IMAGE_TYPE = "image/*";
 
     private Activity mActivity;
     private File mCameraImageDir;
@@ -62,8 +65,13 @@ public class FImageGetter
         try
         {
             Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_PICK);
-            intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setType(IMAGE_TYPE);
+            } else {
+                intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGE_TYPE);
+            }
             mActivity.startActivityForResult(intent, REQUEST_CODE_GET_IMAGE_FROM_ALBUM);
         } catch (Exception e)
         {
